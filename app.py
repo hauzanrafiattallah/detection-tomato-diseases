@@ -74,23 +74,33 @@ def get_test_transform(image_size=(224, 224)):
                              std=[0.229, 0.224, 0.225])
     ])
 
-def classify_image(image: Image.Image, model, transform, class_names):
+def classify_image(image: Image.Image, model, transform, class_names, threshold=0.6):
     """
     Melakukan klasifikasi terhadap gambar yang diberikan.
+    Jika confidence < threshold, kita kembalikan label "unknown" (bukan daun tomat).
     """
     image_tensor = transform(image).unsqueeze(0)
     with torch.no_grad():
         output = model(image_tensor)
         probabilities = torch.nn.functional.softmax(output, dim=1)
         confidence, predicted_idx = torch.max(probabilities, 1)
+        confidence_val = confidence.item()
         predicted_label = class_names[predicted_idx.item()]
-    return predicted_label, confidence.item()
+
+    # Jika nilai confidence di bawah threshold, tandai sebagai "unknown"
+    if confidence_val < threshold:
+        return "unknown", confidence_val
+    else:
+        return predicted_label, confidence_val
 
 # --------------------------
 # Inisialisasi Variabel Global
 # --------------------------
-class_names = ['bacterial_spot', 'early_blight', 'late_blight', 'leaf_mold', 'septoria_leaf_spot', 
-               'spider_mites', 'target_spot', 'yellow_leaf_curl_virus', 'mosaic_virus', 'healthy']
+class_names = [
+    'bacterial_spot', 'early_blight', 'late_blight', 'leaf_mold',
+    'septoria_leaf_spot', 'spider_mites', 'target_spot',
+    'yellow_leaf_curl_virus', 'mosaic_virus', 'healthy'
+]
 dir_images = "informasi_penyakit_image"
 
 # Muat model, informasi penyakit, dan transformasi gambar (menggunakan caching)
@@ -131,6 +141,14 @@ if page == "Welcome":
 # --------------------------
 elif page == "Klasifikasi":
     st.title("🔍 Klasifikasi Penyakit!")
+
+    # Tambahkan slider untuk mengatur threshold out-of-distribution
+    confidence_threshold = st.slider(
+        "Pilih Ambang Kepercayaan (Threshold)",
+        0.0, 1.0, 0.6, 0.01,
+        help="Jika nilai probabilitas di bawah threshold ini, gambar akan dianggap bukan daun tomat (unknown)."
+    )
+
     classification_type = st.selectbox("Pilih Jenis Pendeteksi", ["Pilih Jenis Klasifikasi", "Satuan", "Banyak"])
 
     if classification_type == "Pilih Jenis Klasifikasi":
@@ -159,26 +177,38 @@ elif page == "Klasifikasi":
         
         # Proses klasifikasi jika gambar tersedia
         if image is not None:
-            predicted_label, confidence = classify_image(image, model, test_transform, class_names)
-            st.write(f"**Hasil Diagnosa:** {predicted_label.replace('_', ' ').title()}")
-            st.write(f"**Probabilitas Prediksi:** {confidence * 100:.2f}%")
+            predicted_label, confidence = classify_image(
+                image, model, test_transform, class_names, threshold=confidence_threshold
+            )
             
-            # Dapatkan informasi penyakit terkait
-            info = disease_info.get(predicted_label, {
-                "nama_lain": "Tidak ada informasi",
-                "deskripsi": "Informasi tidak tersedia",
-                "penanganan": "Tidak ada rekomendasi"
-            })
-            st.subheader("Informasi Penyakit:")
-            st.write(f"📌 **Nama Lain:** {info.get('nama_lain', 'Tidak ada informasi')}")
-            st.write(f"📌 **Deskripsi:** {info.get('deskripsi', 'Informasi tidak tersedia')}")
-            st.write(f"💊 **Pengobatan:** {info.get('penanganan', 'Tidak ada rekomendasi')}")
-            
-            if confidence < 0.6:
-                st.error("Kepercayaan model kurang dari 60%. Silakan unggah ulang gambar!")
+            if predicted_label == "unknown":
+                st.warning(
+                    f"Gambar ini mungkin bukan daun tomat. (Confidence: {confidence:.2f})"
+                )
+            else:
+                st.write(f"**Hasil Diagnosa:** {predicted_label.replace('_', ' ').title()}")
+                st.write(f"**Probabilitas Prediksi:** {confidence * 100:.2f}%")
+                
+                # Dapatkan informasi penyakit terkait
+                info = disease_info.get(predicted_label, {
+                    "nama_lain": "Tidak ada informasi",
+                    "deskripsi": "Informasi tidak tersedia",
+                    "penanganan": "Tidak ada rekomendasi"
+                })
+                st.subheader("Informasi Penyakit:")
+                st.write(f"📌 **Nama Lain:** {info.get('nama_lain', 'Tidak ada informasi')}")
+                st.write(f"📌 **Deskripsi:** {info.get('deskripsi', 'Informasi tidak tersedia')}")
+                st.write(f"💊 **Pengobatan:** {info.get('penanganan', 'Tidak ada rekomendasi')}")
+
+                if confidence < 0.6:
+                    st.error("Kepercayaan model kurang dari 60%. Silakan unggah ulang gambar!")
     
     elif classification_type == "Banyak":
-        uploaded_files = st.file_uploader("Upload Gambar (Batch)", type=["JPG", "png", "jpeg"], accept_multiple_files=True)
+        uploaded_files = st.file_uploader(
+            "Upload Gambar (Batch)",
+            type=["JPG", "png", "jpeg"],
+            accept_multiple_files=True
+        )
         if uploaded_files:
             results = []
             for uploaded_file in uploaded_files:
@@ -188,8 +218,23 @@ elif page == "Klasifikasi":
                     st.error(f"Error membuka {uploaded_file.name}: {e}")
                     continue
 
-                predicted_label, confidence = classify_image(image, model, test_transform, class_names)
-                results.append([uploaded_file.name, predicted_label, confidence])
+                predicted_label, confidence = classify_image(
+                    image, model, test_transform, class_names, threshold=confidence_threshold
+                )
+                
+                # Jika unknown, tambahkan catatan
+                if predicted_label == "unknown":
+                    results.append([
+                        uploaded_file.name, 
+                        "Unknown (Not a Tomato Leaf)", 
+                        confidence
+                    ])
+                else:
+                    results.append([
+                        uploaded_file.name, 
+                        predicted_label, 
+                        confidence
+                    ])
             
             if results:
                 df = pd.DataFrame(results, columns=["Nama File", "Label", "Confidence"])
