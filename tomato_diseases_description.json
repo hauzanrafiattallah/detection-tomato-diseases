@@ -1,0 +1,52 @@
+{
+    "bacterial_spot": {
+        "nama_lain": "Bercak Bakteri",
+        "deskripsi": "Disebabkan oleh bakteri Xanthomonas spp. atau Pseudomonas syringae.",
+        "penanganan": "Gunakan ekstrak bawang putih, larutan cuka, minyak neem. Jika infeksi parah, cabut tanaman yang terinfeksi. Hindari menyentuh tanaman sehat setelah menyentuh tanaman yang sakit. Gunakan alat kebun yang steril."
+    },
+    "early_blight": {
+        "nama_lain": "Alternaria Leaf Spot",
+        "deskripsi": "Disebabkan oleh jamur Alternaria solani.",
+        "penanganan": "Gunakan larutan baking soda, minyak neem, teh kompos, ekstrak bawang putih. Cabut tanaman yang terinfeksi parah. Hindari menyiram daun secara langsung, gunakan irigasi tetes."
+    },
+    "late_blight": {
+        "nama_lain": "Phytophthora Blight",
+        "deskripsi": "Disebabkan oleh organisme mirip jamur Phytophthora infestans.",
+        "penanganan": "Gunakan larutan baking soda, minyak neem, ekstrak bawang putih, teh kompos. Cabut tanaman yang terinfeksi parah. Gunakan irigasi tetes dan potong bagian tanaman yang terinfeksi."
+    },
+    "leaf_mold": {
+        "nama_lain": "Bercak Daun",
+        "deskripsi": "Disebabkan oleh jamur Cladosporium fulvum.",
+        "penanganan": "Gunakan ekstrak bawang putih dan larutan baking soda. Jika terinfeksi parah, segera cabut tanaman. Jaga kelembapan dengan irigasi tetes."
+    },
+    "septoria_leaf_spot": {
+        "nama_lain": "Septoria Blight",
+        "deskripsi": "Disebabkan oleh jamur Septoria lycopersici.",
+        "penanganan": "Gunakan larutan baking soda, campuran tembaga sulfat, kapur, dan air. Buang bagian tanaman yang terinfeksi. Gunakan irigasi tetes untuk mengurangi kelembapan."
+    },
+    "spider_mites": {
+        "nama_lain": "Two-Spotted Spider Mite",
+        "deskripsi": "Disebabkan oleh hama Tetranychus urticae.",
+        "penanganan": "Gunakan minyak neem, sabun insektisida alami, larutan bawang putih. Gunakan predator alami seperti tungau pemangsa atau kumbang ladybird."
+    },
+    "target_spot": {
+        "nama_lain": "Corynespora Leaf Spot",
+        "deskripsi": "Disebabkan oleh jamur Corynespora cassiicola.",
+        "penanganan": "Gunakan minyak neem, larutan baking soda, teh kompos, ekstrak bawang putih. Cabut tanaman yang terinfeksi parah dan gunakan irigasi tetes."
+    },
+    "yellow_leaf_curl_virus": {
+        "nama_lain": "Tomato Yellow Leaf Curl Virus (TYLCV)",
+        "deskripsi": "Disebabkan oleh virus dari genus Begomovirus yang disebarkan oleh kutu kebul (Bemisia tabaci).",
+        "penanganan": "Tidak ada obat. Buang tanaman yang terinfeksi dan sterilkan alat kebun setelah digunakan."
+    },
+    "mosaic_virus": {
+        "nama_lain": "Tobacco Mosaic Virus",
+        "deskripsi": "Disebabkan oleh virus Tobamovirus.",
+        "penanganan": "Tidak dapat diobati. Cabut tanaman yang terinfeksi, sterilkan alat, dan cuci tangan setelah menyentuh tanaman yang sakit."
+    },
+    "healthy": {
+        "nama_lain": "-",
+        "deskripsi": "Tanaman bebas dari penyakit dan hama.",
+        "penanganan": "Lakukan pemeriksaan rutin dan praktik budidaya yang baik untuk mencegah penyakit."
+    }
+}
