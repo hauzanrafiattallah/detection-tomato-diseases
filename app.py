@@ -142,13 +142,6 @@ if page == "Welcome":
 elif page == "Klasifikasi":
     st.title("🔍 Klasifikasi Penyakit!")
 
-    # Tambahkan slider untuk mengatur threshold out-of-distribution
-    confidence_threshold = st.slider(
-        "Pilih Ambang Kepercayaan (Threshold)",
-        0.0, 1.0, 0.6, 0.01,
-        help="Jika nilai probabilitas di bawah threshold ini, gambar akan dianggap bukan daun tomat (unknown)."
-    )
-
     classification_type = st.selectbox("Pilih Jenis Pendeteksi", ["Pilih Jenis Klasifikasi", "Satuan", "Banyak"])
 
     if classification_type == "Pilih Jenis Klasifikasi":
@@ -178,7 +171,7 @@ elif page == "Klasifikasi":
         # Proses klasifikasi jika gambar tersedia
         if image is not None:
             predicted_label, confidence = classify_image(
-                image, model, test_transform, class_names, threshold=confidence_threshold
+                image, model, test_transform, class_names
             )
             
             if predicted_label == "unknown":
@@ -219,7 +212,7 @@ elif page == "Klasifikasi":
                     continue
 
                 predicted_label, confidence = classify_image(
-                    image, model, test_transform, class_names, threshold=confidence_threshold
+                    image, model, test_transform, class_names
                 )
                 
                 # Jika unknown, tambahkan catatan
